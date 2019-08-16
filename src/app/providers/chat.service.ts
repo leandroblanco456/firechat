@@ -21,12 +21,26 @@ export class ChatService {
   constructor( private afs: AngularFirestore,
               public afAuth: AngularFireAuth ) {
 
-                this.afAuth.authState.subscribe( user => {} )
+                this.afAuth.authState.subscribe( user => { 
+                  
+                  console.log('estado del usuario: ', user);
+                  if ( !user ) {
+                    return;
+                  } 
+                  this.usuario.nombre = user.displayName;
+                  this.usuario.uid = user.uid;
+
+                 } )
   }
-  login( proveedor: string) {
+  login( proveedor: string ) {
+    if(proveedor === 'google'){
     this.afAuth.auth.signInWithPopup(new auth.GoogleAuthProvider());
+    } else if (proveedor === 'facebook'){
+      this.afAuth.auth.signInWithPopup(new auth.FacebookAuthProvider());
+    }
   }
   logout() {
+    this.usuario = {};
     this.afAuth.auth.signOut(); }
 
   cargarMensajes() {
